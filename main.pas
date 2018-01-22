@@ -17,6 +17,7 @@ const
    C_NOGUESS  = 6; //No hay mas pistas para desplegar.
    C_NOTEXT   = 7; //Debe ingresar texto.
    C_NUMEROS  = 8; //Los numeros no son permitidos.
+   C_TRYFULL  = 9;
 
 type
 
@@ -59,7 +60,6 @@ type
     { Private declarations }
   public
     { Public declarations }
-    //Frases : array[0..4] of TFrases;
     PFrase : Integer;
     nErrores,
     nAciertos,
@@ -109,6 +109,27 @@ begin
                                  finalizo := finalizo + PosArray.Count;
                                  PosArray.Clear;
                                  edtTexto.SetFocus;
+
+                                 if ( nAciertos = 6 ) and ( not ( VerificarGanador ) ) then
+                                    begin
+                                       Texto := InputBox('', Messages(C_TRYFULL), '');
+
+                                       if Texto = FFrase.Frases[PFrase].Frase then
+                                          begin
+                                             lblNguions.Caption := Texto;
+                                             ShowMessage(Messages(C_WINNER));
+                                             SiguientePalabra;
+                                             edtTexto.SetFocus;
+                                          end
+                                       else
+                                          begin
+                                             ShowMessage(Messages(C_DEFEAT));
+                                             ResetearJuego;
+                                             SiguientePalabra;
+                                             edtTexto.SetFocus;
+                                          end;
+
+                                    end;
 
                                     //Devuelve true si se ha desifrado la palabra.
                                  if finalizo = Length(FFrase.Frases[PFrase].Frase) then
@@ -227,13 +248,14 @@ begin
    case Msg of
       C_WINNER   : Result := 'Felicitaciones =D haz ganado!!';
       C_DEFEAT   : Result := 'Has perdido, intentalo de nuevo =(';
-      C_FULLWORD : Result := '¿Desea intentar con la palabra completa? Esto le descontara 2 intentos si no acierta';
-      C_NEWLEVEL : Result := 'Pasaste al nivel numero ' + IntToStr(CurrentLevel) + ' ¡Felicidades!';
+      C_FULLWORD : Result := 'Â¿Desea intentar con la palabra completa? Esto le descontara 2 intentos si no acierta';
+      C_NEWLEVEL : Result := 'Pasaste al nivel numero ' + IntToStr(CurrentLevel) + ' Â¡Felicidades!';
       C_WORDUSED : Result := 'Ya utilizo la letra ';
       C_END      : Result := 'No hay mas letras para jugar =(';
       C_NOGUESS  : Result := 'No hay mas pistas por desplegar.';
       C_NOTEXT   : Result := 'Error: Debe ingresar texto.';
       C_NUMEROS  : Result := 'Error: Numeros no son permitidos.';
+      C_TRYFULL  : Result := 'Advertencia: Has llegado a 6 aciertos, debes intentar la palabra completa.';
    end;
 end;
 
@@ -286,7 +308,6 @@ end;
 procedure TForm1.SiguientePalabra;
 begin
    //Reiniciamos las variables
-
    nErrores  := 0;
    nAciertos := 0;
    finalizo  := 0;
@@ -372,7 +393,7 @@ begin
    nErrores  := 0;
    //Numero de aciertos
    nAciertos := 0;
-   //Acomula el numero de aciertos hasta llegar al tamaño de la palabra
+   //Acomula el numero de aciertos hasta llegar al tamaÃ±o de la palabra
    finalizo  := 0;
    //Numero de pistas
    nPistas   := 0;
@@ -399,7 +420,7 @@ begin
    //Muestra pista #3
    lblDescripcion3.Visible := False;
    LblPista3.Visible       := False;
-   //Dibuja los guiones del tamaño de la palabra
+   //Dibuja los guiones del tamaÃ±o de la palabra
    PrintGuion(FFrase.Frases[frs].Frase);
 end;
 
@@ -407,7 +428,7 @@ procedure TForm1.PrintGuion(Frase : String);
 var
    i : Integer;
 begin
-   //Dibuja el numero de guiones dependiendo del tamaño de la palabra.
+   //Dibuja el numero de guiones dependiendo del tamaÃ±o de la palabra.
    lblNguions.Caption := '';
    for i := 0 to High(Frase) - 1  do
       begin
@@ -432,13 +453,13 @@ begin
             begin
                lblDescripcion2.Visible := True;
                lblPista2.Visible       := True;
-               lblPista2.Caption := FFrase.Frases[PFrase].Descripcion[nPistas];
+               lblPista2.Caption := UpperCase(FFrase.Frases[PFrase].Descripcion[nPistas]);
             end;
          if nPistas = 2 then
             begin
                lblDescripcion3.Visible := True;
                lblPista3.Visible       := True;
-               lblPista3.Caption := FFrase.Frases[PFrase].Descripcion[nPistas];
+               lblPista3.Caption := UpperCase(FFrase.Frases[PFrase].Descripcion[nPistas]);
             end;
       end
    else
