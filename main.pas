@@ -38,6 +38,9 @@ type
     lblNivel: TLabel;
     lblNumero: TLabel;
     btnEnviar: TButton;
+    lblPalabrasUtilizadas: TLabel;
+    lblPalabra: TLabel;
+    lblTamañoPalabra: TLabel;
     procedure FormShow(Sender: TObject);
     procedure edtTextoKeyPress(Sender: TObject; var Key: Char);
     procedure FormActivate(Sender: TObject);
@@ -51,6 +54,7 @@ type
     function  FraseUtilizada(Nmr : Integer) : Boolean;
     function  NFrasesPerLevel : Integer;
     function  Messages(Msg : Integer) : String;
+    procedure AgregarPalabrasUtilizadas( Palabra : String );
     procedure Print(frs : Integer);
     procedure PrintGuion(Frase : String);
     procedure LlenarGuion(Letras : String; Pos : Integer);
@@ -246,7 +250,7 @@ end;
 function TForm1.Messages(Msg: Integer) : String;
 begin
    case Msg of
-      C_WINNER   : Result := 'Felicitaciones =D haz ganado!!';
+      C_WINNER   : Result := 'Felicitaciones =D has ganado!!';
       C_DEFEAT   : Result := 'Has perdido, intentalo de nuevo =(';
       C_FULLWORD : Result := '¿Desea intentar con la palabra completa? Esto le descontara 2 intentos si no acierta';
       C_NEWLEVEL : Result := 'Pasaste al nivel numero ' + IntToStr(CurrentLevel) + ' ¡Felicidades!';
@@ -303,6 +307,7 @@ begin
    FrasesEscogidas.Clear;
    CurrentLevel := 1;
    lblNumero.Caption := IntToStr(CurrentLevel);
+   lblPalabra.Caption := '';
 end;
 
 procedure TForm1.SiguientePalabra;
@@ -313,6 +318,8 @@ begin
    finalizo  := 0;
    nPistas   := 0;
    imgAhorcado.Picture.LoadFromFile('C:/img/img1.png');
+   lblPalabra.Caption := '';
+   lblTamañoPalabra.Caption := 'Numero de letras: ';
    PFrase := FFrase.FraseEscogida;
 
    if FrasesEscogidas.Count <> High(FFrase.Frases) then
@@ -329,6 +336,7 @@ begin
                      PFrase := FFrase.FraseEscogida;
                   end;
                FrasesEscogidas.Add(IntToStr(PFrase));
+               lblTamañoPalabra.Caption := lblTamañoPalabra.Caption + IntToStr(Length(FFrase.Frases[PFrase].Frase));
                Print(PFrase);
                nLevel := nLevel + 1;
             end
@@ -424,6 +432,11 @@ begin
    PrintGuion(FFrase.Frases[frs].Frase);
 end;
 
+procedure TForm1.AgregarPalabrasUtilizadas( Palabra : String );
+begin
+   lblPalabra.caption := lblPalabra.caption + '[ ' + UpperCase(Palabra) + ' ]' + ' ';
+end;
+
 procedure TForm1.PrintGuion(Frase : String);
 var
    i : Integer;
@@ -490,6 +503,8 @@ begin
                Exit;
             end;
       end;
+
+   AgregarPalabrasUtilizadas( Letra );
 
    //Busca los aciertos y devuelve la posicion de la letra encontrada.
    pAci := 0;
