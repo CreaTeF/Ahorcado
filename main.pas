@@ -71,7 +71,8 @@ type
     nPistas,
     CurrentLevel,
     nLevel,
-    l     : Integer;
+    l,
+    NPalabras   : Integer;
     PosArray,
     FrasesEscogidas  : TStringList;
   end;
@@ -199,29 +200,29 @@ begin
                                        edtTexto.SetFocus;
                                     end
                                  else
-                                     begin
-                                        nErrores := nErrores + 2;
-                                        lblErrores.Caption := 'Errores: ' + IntToStr(nErrores);
-                                        lblErrores.Color := clRed;
+                                    begin
+                                       nErrores := nErrores + 2;
+                                       lblErrores.Caption := 'Errores: ' + IntToStr(nErrores);
+                                       lblErrores.Color := clRed;
 
-                                        if nErrores = 6 then
-                                           begin
-                                              if VerificarGanador then
-                                                 begin
-                                                    ShowMessage(Messages(C_WINNER));
-                                                    SiguientePalabra;
-                                                    edtTexto.SetFocus;
-                                                 end
-                                              else
-                                                 begin
-                                                    ShowMessage(Messages(C_DEFEAT));
-                                                    ResetearJuego;
-                                                    SiguientePalabra;
-                                                    edtTexto.SetFocus;
-                                                 end;
-                                           end;
-                                        CambiarImagen(nErrores);
-                                     end;
+                                       if nErrores = 6 then
+                                          begin
+                                             if VerificarGanador then
+                                                begin
+                                                   ShowMessage(Messages(C_WINNER));
+                                                   SiguientePalabra;
+                                                   edtTexto.SetFocus;
+                                                end
+                                             else
+                                                begin
+                                                   ShowMessage(Messages(C_DEFEAT));
+                                                   ResetearJuego;
+                                                   SiguientePalabra;
+                                                   edtTexto.SetFocus;
+                                                end;
+                                          end;
+                                       CambiarImagen(nErrores);
+                                    end;
                             end;
                         end;
                   end;
@@ -317,6 +318,7 @@ begin
    nAciertos := 0;
    finalizo  := 0;
    nPistas   := 0;
+   NPalabras := 0;
    imgAhorcado.Picture.LoadFromFile('C:/img/img1.png');
    lblPalabra.Caption := '';
    lblTamañoPalabra.Caption := 'Numero de letras: ';
@@ -391,6 +393,8 @@ begin
    nLevel       := 0;
    //obtiene el numero de palabras por nivel
    l            := 0;
+   //Contador de palabras utilizadas
+   NPalabras    := 0;
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
@@ -434,7 +438,12 @@ end;
 
 procedure TForm1.AgregarPalabrasUtilizadas( Palabra : String );
 begin
-   lblPalabra.caption := lblPalabra.caption + '[ ' + UpperCase(Palabra) + ' ]' + ' ';
+   if NPalabras = 5 then
+      lblPalabra.caption := lblPalabra.caption + '[ ' + UpperCase(Palabra) + ' ]' + ' ' + #13
+   else
+      lblPalabra.caption := lblPalabra.caption + '[ ' + UpperCase(Palabra) + ' ]' + ' ';
+
+   Inc(NPalabras);
 end;
 
 procedure TForm1.PrintGuion(Frase : String);
